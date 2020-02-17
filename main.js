@@ -9,6 +9,7 @@ import "toastify-js/src/toastify.css"
   const textValue = document.querySelector('#for-connection');
 
   let peer, conn;
+  const allConnections = [];
 
   function main() {
     initPeer();
@@ -32,15 +33,23 @@ import "toastify-js/src/toastify.css"
 
       showSuccessToast('Connected');
 
-      sendButton.addEventListener('click', () => {
-        sendMessage(conn);
-      });
 
       conn.on('data', (data) => {
         renderDataFromConnection(data);
       });
 
+      sendButton.addEventListener('click', () => {
+        allConnections.forEach(item => {
+          sendMessage(item);
+        });
+      });
+
     });
+
+    conn.on('error', (err) => {
+      showErrorToast(err);
+    });
+
   }
 
   function sendMessage(connectionHandler) {
@@ -50,7 +59,9 @@ import "toastify-js/src/toastify.css"
     divElem.innerHTML = textValue.value;
     fromConnection.appendChild(divElem);
     connectionHandler.send(textValue.value);
-    textValue.value = '';
+    setTimeout(() => {
+      textValue.value = '';
+    }, 50);
   }
 
   function renderDataFromConnection(data) {
@@ -101,7 +112,7 @@ import "toastify-js/src/toastify.css"
       close: true,
       gravity: "top",
       position: 'right',
-      backgroundColor: "#333333",
+      backgroundColor: "#008080",
     }).showToast();
   }
 
