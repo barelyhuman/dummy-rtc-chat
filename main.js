@@ -44,6 +44,11 @@ import "toastify-js/src/toastify.css"
   }
 
   function sendMessage(connectionHandler) {
+    const fromConnection = document.querySelector('#from-connection');
+    const divElem = document.createElement('div');
+    divElem.classList.add('sent-message');
+    divElem.innerHTML = textValue.value;
+    fromConnection.appendChild(divElem);
     connectionHandler.send(textValue.value);
     textValue.value = '';
   }
