@@ -11,6 +11,10 @@ import Peer from 'peerjs';
   function main() {
     initPeer();
 
+    if (window.location.hash) {
+      hashChangeListener();
+    }
+
     namespace.addEventListener('hashchange', hashChangeListener);
 
   }
