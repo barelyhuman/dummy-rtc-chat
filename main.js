@@ -38,12 +38,6 @@ import "toastify-js/src/toastify.css"
         renderDataFromConnection(data);
       });
 
-      sendButton.addEventListener('click', () => {
-        allConnections.forEach(item => {
-          sendMessage(item);
-        });
-      });
-
     });
 
     conn.on('error', (err) => {
@@ -52,12 +46,15 @@ import "toastify-js/src/toastify.css"
 
   }
 
-  function sendMessage(connectionHandler) {
+  function renderMessage() {
     const fromConnection = document.querySelector('#from-connection');
     const divElem = document.createElement('div');
     divElem.classList.add('sent-message');
     divElem.innerHTML = textValue.value;
     fromConnection.appendChild(divElem);
+  }
+
+  function sendMessage(connectionHandler) {
     connectionHandler.send(textValue.value);
     setTimeout(() => {
       textValue.value = '';
@@ -89,6 +86,7 @@ import "toastify-js/src/toastify.css"
     });
 
     peer.on('connection', (connection) => {
+      allConnections.push(connection);
       connection.on('open', () => {
         showSuccessToast('Friend Connected');
       });
@@ -96,12 +94,20 @@ import "toastify-js/src/toastify.css"
       connection.on('data', (data) => {
         renderDataFromConnection(data);
       });
-
-      sendButton.addEventListener('click', () => {
-        sendMessage(connection);
-      });
-
     });
+
+    sendButton.addEventListener('click', () => {
+      renderMessage();
+      if (!allConnections.length && conn) {
+        sendMessage(conn);
+      } else {
+        allConnections.forEach(item => {
+          sendMessage(item);
+        })
+      }
+    });
+
+
   }
 
   function showSuccessToast(message) {
