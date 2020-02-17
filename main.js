@@ -53,8 +53,10 @@ import Peer from 'peerjs';
     peer = new Peer();
 
     peer.on('open', (id) => {
-      const shareUrl = document.querySelector('#share-url');
-      shareUrl.innerHTML = namespace.location.host + '/#' + id;
+      if (!window.location.hash) {
+        const shareUrl = document.querySelector('#share-url');
+        shareUrl.innerHTML = namespace.location.host + '/#' + id;
+      }
     });
 
     peer.on('connection', (connection) => {
