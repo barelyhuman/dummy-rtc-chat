@@ -1,4 +1,6 @@
 import Peer from 'peerjs';
+import Toastify from 'toastify-js'
+import "toastify-js/src/toastify.css"
 
 
 (function (namespace) {
@@ -12,7 +14,9 @@ import Peer from 'peerjs';
     initPeer();
 
     if (window.location.hash) {
-      hashChangeListener();
+      setTimeout(() => {
+        hashChangeListener();
+      }, 1500);
     }
 
     namespace.addEventListener('hashchange', hashChangeListener);
@@ -25,6 +29,8 @@ import Peer from 'peerjs';
     conn = peer.connect(peerId);
 
     conn.on('open', () => {
+
+      showSuccessToast('Connected');
 
       sendButton.addEventListener('click', () => {
         sendMessage(conn);
@@ -52,16 +58,23 @@ import Peer from 'peerjs';
   function initPeer() {
     peer = new Peer();
 
+    const wrapper = document.querySelector('#join-url-wrapper');
+    if (window.location.hash) {
+      wrapper.hidden = true;
+    } else {
+      wrapper.hidden = false;
+    }
+
     peer.on('open', (id) => {
-      if (!window.location.hash) {
-        const shareUrl = document.querySelector('#share-url');
-        shareUrl.innerHTML = namespace.location.host + '/#' + id;
-      }
+
+      const shareUrl = document.querySelector('#share-url');
+      shareUrl.innerHTML = namespace.location.host + '/#' + id;
+
     });
 
     peer.on('connection', (connection) => {
       connection.on('open', () => {
-        console.log("Peer connected");
+        showSuccessToast('Friend Connected');
       });
 
       connection.on('data', (data) => {
@@ -73,6 +86,30 @@ import Peer from 'peerjs';
       });
 
     });
+  }
+
+  function showSuccessToast(message) {
+    Toastify({
+      text: message,
+      duration: 3000,
+      newWindow: true,
+      close: true,
+      gravity: "top",
+      position: 'right',
+      backgroundColor: "#333333",
+    }).showToast();
+  }
+
+  function showErrorToast(message) {
+    Toastify({
+      text: "",
+      duration: 3000,
+      newWindow: true,
+      close: true,
+      gravity: "top",
+      position: 'right',
+      backgroundColor: "#B03060",
+    }).showToast();
   }
 
   main();
